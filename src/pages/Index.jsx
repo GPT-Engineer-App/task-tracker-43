@@ -7,13 +7,20 @@ const Index = () => {
 
   const addTask = () => {
     if (newTask.trim() !== '') {
-      setTasks([...tasks, newTask]);
+      setTasks([...tasks, { text: newTask, completed: false }]);
       setNewTask('');
     }
   };
 
   const deleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
+  };
+
+  const toggleTaskCompletion = (index) => {
+    const updatedTasks = tasks.map((task, i) => 
+      i === index ? { ...task, completed: !task.completed } : task
+    );
     setTasks(updatedTasks);
   };
 
@@ -36,22 +43,34 @@ const Index = () => {
             <FaPlus />
           </button>
         </div>
-        <ul className="bg-white shadow rounded p-4">
-          {tasks.map((task, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center mb-2 p-2 border-b border-gray-200"
-            >
-              {task}
-              <button
-                className="text-red-500"
-                onClick={() => deleteTask(index)}
+        {tasks.length === 0 ? (
+          <div className="text-center text-gray-500">No tasks available</div>
+        ) : (
+          <ul className="bg-white shadow rounded p-4">
+            {tasks.map((task, index) => (
+              <li
+                key={index}
+                className={`flex justify-between items-center mb-2 p-2 border-b border-gray-200 ${task.completed ? 'line-through text-gray-500' : ''}`}
               >
-                <FaTrash />
-              </button>
-            </li>
-          ))}
-        </ul>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={task.completed}
+                    onChange={() => toggleTaskCompletion(index)}
+                  />
+                  {task.text}
+                </div>
+                <button
+                  className="text-red-500"
+                  onClick={() => deleteTask(index)}
+                >
+                  <FaTrash />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
